@@ -1,6 +1,6 @@
+use regex::Regex;
 use std::env;
 use std::io::BufRead;
-use regex::Regex;
 
 const ANSI_RED_BACKGROUND: &str = "\u{001B}[41m";
 const ANSI_GREEN_BACKGROUND: &str = "\u{001B}[42m";
@@ -56,7 +56,7 @@ fn main() {
         if output.is_empty() {
             output.push_str(&line);
         }
-        
+
         println!("{}", output);
     }
 }
