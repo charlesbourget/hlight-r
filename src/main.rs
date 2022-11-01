@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::env;
 use std::io::BufRead;
+use std::process::exit;
 
 const ANSI_RED_BACKGROUND: &str = "\u{001B}[41m";
 const ANSI_GREEN_BACKGROUND: &str = "\u{001B}[42m";
@@ -41,7 +42,14 @@ fn main() {
         .collect();
 
     for line in std::io::stdin().lock().lines() {
-        let line = line.unwrap();
+        let line = match line {
+            Ok(line) => line,
+            Err(_) => {
+                println!("Error reading line. Unable to read non UTF8 characters.");
+                exit(1);
+            }
+        };
+
         let mut output = String::new();
 
         for pattern in &patterns {
