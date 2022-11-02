@@ -83,5 +83,5 @@ fn usage() {
     println!("  -h, --help\t\tShow this help message and exit");
     println!("Patterns:");
     println!("  Regular expressions to match against each line of input");
-    std::process::exit(0);
+    exit(0);
 }
