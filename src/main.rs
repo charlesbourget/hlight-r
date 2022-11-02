@@ -42,7 +42,7 @@ fn main() {
         .collect();
 
     for line in std::io::stdin().lock().lines() {
-        let line = match line {
+        let mut line = match line {
             Ok(line) => line,
             Err(_) => {
                 println!("Error reading line. Unable to read non UTF8 characters.");
@@ -50,22 +50,14 @@ fn main() {
             }
         };
 
-        let mut output = String::new();
-
         for pattern in &patterns {
             if pattern.regex.is_match(&line) {
-                output.push_str(pattern.color);
-                output.push_str(&line);
-                output.push_str(ANSI_RESET);
+                line = String::from(pattern.color) + &line + ANSI_RESET;
                 break;
             }
         }
 
-        if output.is_empty() {
-            output.push_str(&line);
-        }
-
-        println!("{}", output);
+        println!("{}", line);
     }
 }
 
@@ -86,8 +78,10 @@ fn validate_args(args: &Vec<String>, colors_len: usize) {
 }
 
 fn usage() {
-    println!("Usage: {} [options]", env!("CARGO_PKG_NAME"));
+    println!("Usage: {} [options] [patterns]", env!("CARGO_PKG_NAME"));
     println!("Options:");
-    println!("  -h, --help\t\tShow this help message");
+    println!("  -h, --help\t\tShow this help message and exit");
+    println!("Patterns:");
+    println!("  Regular expressions to match against each line of input");
     std::process::exit(0);
 }
