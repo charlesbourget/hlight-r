@@ -32,33 +32,40 @@ fn main() {
 
     validate_args(&args, COLORS.len());
 
-    let patterns: Vec<Pattern> = args[1..]
-        .iter()
-        .zip(COLORS.iter())
-        .map(|(regex, color)| Pattern {
-            color: color,
-            regex: Regex::new(regex).unwrap(),
-        })
-        .collect();
+    let patterns: Vec<Pattern> = build_pattern_vector(&args);
 
     for line in std::io::stdin().lock().lines() {
-        let mut line = match line {
+        let line = match line {
             Ok(line) => line,
             Err(_) => {
                 println!("Error reading line. Unable to read non UTF8 characters.");
                 exit(1);
             }
         };
-
-        for pattern in &patterns {
-            if pattern.regex.is_match(&line) {
-                line = String::from(pattern.color) + &line + ANSI_RESET;
-                break;
-            }
-        }
-
-        println!("{}", line);
+    
+        println!("{}", color_line(line, &patterns));
     }
+}
+
+fn color_line(line: String, patterns: &Vec<Pattern>) -> String {
+    for pattern in patterns {
+        if pattern.regex.is_match(&line) {
+            return String::from(pattern.color) + &line + ANSI_RESET;
+        }
+    }
+
+    line
+}
+
+fn build_pattern_vector(args: &Vec<String>) -> Vec<Pattern> {
+    args[1..]
+        .iter()
+        .zip(COLORS.iter())
+        .map(|(regex, color)| Pattern {
+            color: color,
+            regex: Regex::new(regex).unwrap(),
+        })
+        .collect()
 }
 
 fn validate_args(args: &Vec<String>, colors_len: usize) {
