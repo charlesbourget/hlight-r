@@ -23,7 +23,7 @@ const COLORS: [&str; 7] = [
 ];
 
 struct Pattern {
-    color: &'static str,
+    color: String,
     regex: Regex,
 }
 
@@ -42,7 +42,7 @@ fn main() {
                 exit(1);
             }
         };
-    
+
         println!("{}", color_line(line, &patterns));
     }
 }
@@ -50,7 +50,7 @@ fn main() {
 fn color_line(line: String, patterns: &Vec<Pattern>) -> String {
     for pattern in patterns {
         if pattern.regex.is_match(&line) {
-            return String::from(pattern.color) + &line + ANSI_RESET;
+            return format!("{}{}{}", &pattern.color, &line, ANSI_RESET);
         }
     }
 
@@ -62,7 +62,7 @@ fn build_pattern_vector(args: &Vec<String>) -> Vec<Pattern> {
         .iter()
         .zip(COLORS.iter())
         .map(|(regex, color)| Pattern {
-            color: color,
+            color: String::from(*color),
             regex: Regex::new(regex).unwrap(),
         })
         .collect()
