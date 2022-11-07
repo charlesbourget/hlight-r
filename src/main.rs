@@ -33,12 +33,7 @@ fn main() {
     let patterns: Vec<Pattern> = build_pattern_vector(&args);
 
     for line in std::io::stdin().lock().lines() {
-        let line = match line {
-            Ok(line) => line,
-            Err(e) => {
-                panic!("Error reading line. {}", e);
-            }
-        };
+        let line = line.expect("Error reading line from stdin");
 
         println!("{}", color_line(line, &patterns));
     }
@@ -60,7 +55,7 @@ fn build_pattern_vector(args: &Vec<String>) -> Vec<Pattern> {
         .zip(COLORS.iter())
         .map(|(regex, color)| Pattern {
             color: String::from(*color),
-            regex: Regex::new(regex).unwrap(),
+            regex: Regex::new(regex).expect("Error parsing regex"),
         })
         .collect()
 }
